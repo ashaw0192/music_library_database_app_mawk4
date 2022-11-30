@@ -26,6 +26,17 @@ describe Application do
     end
   end
 
+  context "GET to /artists/new" do
+    it "returns form" do
+      response = get("/artists/new")
+      expect(response.status).to eq 200
+      expect(response.body).to include '<h1>Add an Artist</h1>'
+      expect(response.body).to include '<form action="/artists" method="POST">'
+      expect(response.body).to include '<input type="text" name="name" />'
+      expect(response.body).to include '<input type="text" name="genre" />'
+    end
+  end
+
   context "GET to /artists/:id" do
     it "returns the 1st artist by id 1" do
       response = get("/artists/1")
@@ -50,6 +61,18 @@ describe Application do
       expect(response.body).to include '<h1>Albums</h1>'
       expect(response.body).to include '<a href="/albums/1"> Title: Doolittle - Released: 1989 </a>'
       expect(response.body).to include '<a href="/albums/2"> Title: Surfer Rosa - Released: 1988 </a>'
+    end
+  end
+
+  context "GET to /albums/new" do
+    it "returns form" do
+      response = get("/albums/new")
+      expect(response.status).to eq 200
+      expect(response.body).to include '<h1>Add an Album</h1>'
+      expect(response.body).to include '<form action="/albums" method="POST">'
+      expect(response.body).to include '<input type="text" name="title" />'
+      expect(response.body).to include '<input type="text" name="release_year" />'
+      expect(response.body).to include '<input type="text" name="artist_id" />'
     end
   end
 

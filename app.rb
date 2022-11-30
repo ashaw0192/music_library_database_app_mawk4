@@ -24,6 +24,10 @@ class Application < Sinatra::Base
     return erb(:all_artists)
   end
 
+  get '/artists/new' do
+    return erb(:artist_add)
+  end
+
   get '/artists/:id' do
     id = params[:id]
     repo = ArtistRepository.new
@@ -40,6 +44,10 @@ class Application < Sinatra::Base
     return erb(:all_albums)
   end
 
+  get '/albums/new' do
+    return erb(:album_add)
+  end
+
   get '/albums/:id' do
     id = params[:id]
     repo_alb = AlbumRepository.new
@@ -53,20 +61,38 @@ class Application < Sinatra::Base
     return erb(:album)
   end
 
+  def invalid_request_parameters_art?
+    params[:name] == nil || params[:genre] == nil 
+  end
+
   post '/artists' do
+    if invalid_request_parameters_art? 
+      status 400
+      return ""
+    end
     name = params[:name]
     genre = params[:genre]
     sql = 'INSERT INTO artists (name, genre) VALUES ($1, $2);'
     params = [name, genre]
     DatabaseConnection.exec_params(sql, params)
+    return erb(:added_successfully)
+  end
+
+  def invalid_request_parameters_alb?
+    params[:title] == nil || params[:release_year] == nil || params[:artist_id] == nil
   end
 
   post '/albums' do
+    if invalid_request_parameters_alb? 
+      status 400
+      return ""
+    end
     title = params[:title]
     release_year = params[:release_year]
     artist_id = params[:artist_id]
     sql = 'INSERT INTO albums (title, release_year, artist_id) VALUES ($1, $2, $3);'
     params = [title, release_year, artist_id]
     DatabaseConnection.exec_params(sql, params)
+    return erb(:added_successfully)
   end
 end
