@@ -14,10 +14,30 @@ class Application < Sinatra::Base
     also_reload 'lib/artist_repository'
   end
 
+  get '/' do
+    return erb(:home)
+  end
+
   get '/artists' do
     repo = ArtistRepository.new
-    artists = repo.all
-    response = artists.map { |artist| artist.name }.join(", ")
+    @artists = repo.all
+    return erb(:all_artists)
+  end
+
+  get '/artists/:id' do
+    id = params[:id]
+    repo = ArtistRepository.new
+    artist = repo.find(id)
+    @name = artist.name
+    @genre = artist.genre
+    return erb(:artist)
+  end
+
+
+  get '/albums' do
+    repo = AlbumRepository.new
+    @albums = repo.all
+    return erb(:all_albums)
   end
 
   get '/albums/:id' do
@@ -30,13 +50,7 @@ class Application < Sinatra::Base
     artist_id = album.artist_id
     artist = repo_art.find(artist_id)
     @name = artist.name
-    return erb(:albums)
-  end
-
-  get '/albums' do
-    repo = AlbumRepository.new
-    @albums = repo.all
-    return erb(:artists)
+    return erb(:album)
   end
 
   post '/artists' do
